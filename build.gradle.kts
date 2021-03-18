@@ -18,7 +18,7 @@ buildscript {
 }
 
 allprojects {
-    group = "xyz.starestarrysky"
+    group = "com.github.starestarrysky"
     version = "1.0.0"
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -48,9 +48,9 @@ allprojects {
         }
     }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+//    tasks.withType<Test> {
+//        useJUnitPlatform()
+//    }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {

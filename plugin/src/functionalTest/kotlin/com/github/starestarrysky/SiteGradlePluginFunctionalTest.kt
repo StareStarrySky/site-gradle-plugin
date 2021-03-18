@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * A simple functional test for the 'com.github.starestarrysky' plugin.
+ * A simple functional test for the 'com.github.starestarrysky.site-gradle-plugin' plugin.
  */
 class SiteGradlePluginFunctionalTest {
     @Test fun `can run task`() {
@@ -19,7 +19,7 @@ class SiteGradlePluginFunctionalTest {
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
-                id('com.github.starestarrysky')
+                id('com.github.starestarrysky.site-gradle-plugin')
             }
         """)
 
@@ -32,6 +32,6 @@ class SiteGradlePluginFunctionalTest {
         val result = runner.build();
 
         // Verify the result
-        assertTrue(result.output.contains("Hello from plugin 'com.github.starestarrysky'"))
+        assertTrue(result.output.contains("from"))
     }
 }

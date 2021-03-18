@@ -9,6 +9,7 @@
 plugins {
     `java-gradle-plugin`
     kotlin("jvm")
+    `maven-publish`
 }
 
 base {
@@ -17,11 +18,13 @@ base {
 
 dependencies {
     implementation(platform(kotlin("bom")))
+    implementation("org.kohsuke:github-api:1.123")
+    implementation("com.github.github:site-maven-plugin:0.12")
 }
 
 gradlePlugin {
     val siteGradlePlugin by plugins.creating {
-        id = "com.github.starestarrysky"
+        id = "com.github.starestarrysky.site-gradle-plugin"
         implementationClass = "com.github.starestarrysky.SiteGradlePlugin"
     }
 }
@@ -39,4 +42,26 @@ val functionalTest by tasks.registering(Test::class) {
 
 tasks.check {
     dependsOn(functionalTest)
+}
+
+
+val generateSourcesJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().java.srcDirs)
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = rootProject.group.toString()
+            artifactId = rootProject.name
+            version = rootProject.version.toString()
+
+            artifact(generateSourcesJar)
+            from(components["java"])
+        }
+    }
 }

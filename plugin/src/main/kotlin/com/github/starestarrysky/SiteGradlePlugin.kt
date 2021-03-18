@@ -3,6 +3,7 @@
  */
 package com.github.starestarrysky
 
+import com.github.starestarrysky.extension.SiteGradlePluginExtension
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 
@@ -11,10 +12,11 @@ import org.gradle.api.Plugin
  */
 class SiteGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
+        val extension = project.extensions.create("site", SiteGradlePluginExtension::class.java)
         // Register a task
         project.tasks.register("siteGradlePlugin") { task ->
             task.doLast {
-                println("Hello from plugin 'com.github.starestarrysky'")
+                println("Hello ${extension.people} from plugin '${extension.message}'")
             }
         }
     }
