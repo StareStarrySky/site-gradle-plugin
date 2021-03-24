@@ -3,7 +3,9 @@
  */
 package com.github.starestarrysky
 
-import com.github.starestarrysky.extension.SiteGradlePluginExtension
+import com.github.starestarrysky.extension.GitHubExtension
+import com.github.starestarrysky.tasks.GitHubCredentialsAware
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 
@@ -11,12 +13,19 @@ import org.gradle.api.Plugin
  * A simple 'hello world' plugin.
  */
 class SiteGradlePlugin: Plugin<Project> {
+    companion object {
+        const val EXTENSION_NAME = "github"
+    }
+
     override fun apply(project: Project) {
-        val extension = project.extensions.create("site", SiteGradlePluginExtension::class.java)
-        // Register a task
-        project.tasks.register("siteGradlePlugin") { task ->
-            task.doLast {
-                println("Hello ${extension.people} from plugin '${extension.message}'")
+        val gitHubExtension = project.extensions.create(EXTENSION_NAME, GitHubExtension::class.java)
+        project.tasks.withType(GitHubCredentialsAware::class.java).configureEach {
+            Action<GitHubCredentialsAware> { task ->
+                run {
+                    task.gitHubCredentials.url = gitHubExtension.gitHubCredentials.url
+                    task.gitHubCredentials.userName = gitHubExtension.gitHubCredentials.userName
+                    task.gitHubCredentials.oauthAccessToken = gitHubExtension.gitHubCredentials.oauthAccessToken
+                }
             }
         }
     }
