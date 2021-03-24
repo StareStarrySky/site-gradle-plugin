@@ -12,24 +12,73 @@ import kotlin.test.assertTrue
  * A simple functional test for the 'com.github.starestarrysky.site-gradle-plugin' plugin.
  */
 class SiteGradlePluginFunctionalTest {
-    @Test fun `can run task`() {
+    @Test fun `can run task by groovy`() {
         // Setup the test build
-        val projectDir = File("build/functionalTest")
-        projectDir.mkdirs()
+        val projectDir = createBuildFile("groovy")
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
             plugins {
                 id('com.github.starestarrysky.site-gradle-plugin')
             }
+            siteGradlePlugin {
+                repositoryName = 'you'
+                repositoryOwner = 'hi'
+                branch = 'refs/heads/main'
+                merge = true
+                message = 'Repository-test for project.version.'
+                outputDirectory = File('project.build.directory/deploy')
+            }
         """)
 
+        // Run the build and verify the result
+        runTask(projectDir)
+    }
+
+    @Test fun `can run task by kotlin`() {
+        // Setup the test build
+        val projectDir = createBuildFile("kotlin")
+        projectDir.resolve("settings.gradle.kts").writeText("")
+        projectDir.resolve("build.gradle.kts").writeText("""
+            import com.github.starestarrysky.extension.SiteGradlePluginExtension
+
+            plugins {
+                id("com.github.starestarrysky.site-gradle-plugin")
+            }
+
+            configure<SiteGradlePluginExtension> {
+                repositoryName = "you"
+                repositoryOwner = "hi"
+                branch = "refs/heads/main"
+                merge = true
+                message = "Repository-test for project.version."
+                outputDirectory = File("project.build.directory/deploy")
+            }
+        """)
+
+        // Run the build and verify the result
+        runTask(projectDir)
+    }
+
+    /**
+     * Setup the test build
+     */
+    private fun createBuildFile(lang: String): File {
+        val projectDir = File("build/functionalTest/${lang}")
+        projectDir.mkdirs()
+        return projectDir
+    }
+
+    /**
+     * Run the build and verify the result
+     */
+    private fun runTask(projectDir: File) {
         // Run the build
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("siteGradlePlugin")
         runner.withProjectDir(projectDir)
-        val result = runner.build();
+        val result = runner.build()
 
         // Verify the result
         assertTrue(result.output.contains("from"))
