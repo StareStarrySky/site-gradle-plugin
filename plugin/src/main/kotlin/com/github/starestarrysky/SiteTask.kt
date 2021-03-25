@@ -110,7 +110,7 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
             val excludeFiles = project.fileTree(baseDir).matching { match -> match.exclude(excludes.get()) }
             includeFiles.plus(excludeFiles)
 
-            TODO("continue")
+            TODO("test")
         }
     }
 
