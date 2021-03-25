@@ -6,18 +6,15 @@ import org.gradle.api.tasks.Optional
 
 @CompileStatic
 class GitHubCredentials {
-    companion object {
-        const val DEFAULT_URL = "https://api.github.com"
-    }
-
     @get:Input
-    @Optional
-    var url: String = DEFAULT_URL
-
-    @get:Input
-    @Optional
+    @get:Optional
     var userName: String? = null
 
     @get:Input
-    var oauthAccessToken: String? = null
+    @get:Optional
+    var password: String? = null
+
+    @get:Input
+    @get:Optional
+    var oauthToken: String? = null
 }

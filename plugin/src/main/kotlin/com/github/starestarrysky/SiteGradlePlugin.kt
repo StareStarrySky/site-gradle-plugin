@@ -22,9 +22,9 @@ class SiteGradlePlugin: Plugin<Project> {
         project.tasks.withType(GitHubCredentialsAware::class.java).configureEach {
             Action<GitHubCredentialsAware> { task ->
                 run {
-                    task.gitHubCredentials.url = gitHubExtension.gitHubCredentials.url
                     task.gitHubCredentials.userName = gitHubExtension.gitHubCredentials.userName
-                    task.gitHubCredentials.oauthAccessToken = gitHubExtension.gitHubCredentials.oauthAccessToken
+                    task.gitHubCredentials.password = gitHubExtension.gitHubCredentials.password
+                    task.gitHubCredentials.oauthToken = gitHubExtension.gitHubCredentials.oauthToken
                 }
             }
         }
