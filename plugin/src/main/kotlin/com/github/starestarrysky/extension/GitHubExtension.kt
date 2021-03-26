@@ -4,5 +4,5 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 open class GitHubExtension {
-    var gitHubCredentials = GitHubCredentials()
+    var credentials = GitHubCredentials()
 }

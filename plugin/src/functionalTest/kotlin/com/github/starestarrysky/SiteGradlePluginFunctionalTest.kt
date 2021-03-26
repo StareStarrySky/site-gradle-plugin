@@ -17,16 +17,27 @@ class SiteGradlePluginFunctionalTest {
         val projectDir = createBuildFile("groovy")
         projectDir.resolve("settings.gradle").writeText("")
         projectDir.resolve("build.gradle").writeText("""
+            import com.github.starestarrysky.SiteTask
+
             plugins {
                 id('com.github.starestarrysky.site-gradle-plugin')
             }
-            siteGradlePlugin {
-                repositoryName = 'you'
-                repositoryOwner = 'hi'
+
+            github {
+                credentials {
+                    userName = 'StareStarrySky'
+                    oauthToken = ''
+                }
+            }
+
+            task site(type: SiteTask) {
+                repositoryName = 'repository-test'
+                repositoryOwner = 'StareStarrySky'
                 branch = 'refs/heads/main'
-                merge = true
                 message = 'Repository-test for project.version.'
-                outputDirectory = File('project.build.directory/deploy')
+                outputDirectory = file('D:/IdeaProjects/site-gradle-plugin/plugin/build/libs')
+                includes = ['**/*', ' ']
+                excludes = ['plugin-1.0.0.jar']
             }
         """)
 
@@ -39,19 +50,22 @@ class SiteGradlePluginFunctionalTest {
         val projectDir = createBuildFile("kotlin")
         projectDir.resolve("settings.gradle.kts").writeText("")
         projectDir.resolve("build.gradle.kts").writeText("""
-            import com.github.starestarrysky.extension.SiteGradlePluginExtension
+            import com.github.starestarrysky.extension.GitHubExtension
+            import com.github.starestarrysky.SiteTask
 
             plugins {
                 id("com.github.starestarrysky.site-gradle-plugin")
             }
 
-            configure<SiteGradlePluginExtension> {
-                repositoryName = "you"
-                repositoryOwner = "hi"
-                branch = "refs/heads/main"
-                merge = true
-                message = "Repository-test for project.version."
-                outputDirectory = File("project.build.directory/deploy")
+            configure<GitHubExtension> {
+                credentials {
+                    userName = 'StareStarrySky'
+                    oauthToken = ''
+                }
+            }
+
+            tasks.register<SiteTask>("site") {
+                repositoryName = "repositoryName"
             }
         """)
 
@@ -76,11 +90,11 @@ class SiteGradlePluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("siteGradlePlugin")
+        runner.withArguments("site")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
         // Verify the result
-        assertTrue(result.output.contains("from"))
+        result.tasks.forEach { task -> assertTrue { task.outcome.name == "SUCCESS" } }
     }
 }

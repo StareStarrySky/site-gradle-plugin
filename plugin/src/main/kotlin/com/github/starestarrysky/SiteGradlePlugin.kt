@@ -3,9 +3,9 @@
  */
 package com.github.starestarrysky
 
+import com.github.starestarrysky.extension.GitHubCredentials
 import com.github.starestarrysky.extension.GitHubExtension
 import com.github.starestarrysky.tasks.GitHubCredentialsAware
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 
@@ -18,15 +18,14 @@ class SiteGradlePlugin: Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        val gitHubExtension = project.extensions.create(EXTENSION_NAME, GitHubExtension::class.java)
-        project.tasks.withType(GitHubCredentialsAware::class.java).configureEach {
-            Action<GitHubCredentialsAware> { task ->
-                run {
-                    task.gitHubCredentials.userName = gitHubExtension.gitHubCredentials.userName
-                    task.gitHubCredentials.password = gitHubExtension.gitHubCredentials.password
-                    task.gitHubCredentials.oauthToken = gitHubExtension.gitHubCredentials.oauthToken
-                }
-            }
+        val gitHubExtension = project.extensions.create("github", GitHubExtension::class.java)
+        val gitHubCredentials = project.extensions.create("credentials", GitHubCredentials::class.java)
+        gitHubExtension.credentials = gitHubCredentials
+
+        project.tasks.withType(GitHubCredentialsAware::class.java).configureEach { task ->
+            task.credentials.userName = gitHubExtension.credentials.userName
+            task.credentials.password = gitHubExtension.credentials.password
+            task.credentials.oauthToken = gitHubExtension.credentials.oauthToken
         }
     }
 }

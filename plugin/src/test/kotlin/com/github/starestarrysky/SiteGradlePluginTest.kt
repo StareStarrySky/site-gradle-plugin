@@ -15,8 +15,10 @@ class SiteGradlePluginTest {
         // Create a test project and apply the plugin
         val project = ProjectBuilder.builder().build()
         project.plugins.apply("com.github.starestarrysky.site-gradle-plugin")
+        project.tasks.register("site", SiteTask::class.java)
 
         // Verify the result
-        assertNotNull(project.tasks.findByName("siteGradlePlugin"))
+        val task = project.tasks.findByPath(":site")
+        assert(task != null && task.actions.size > 0)
     }
 }

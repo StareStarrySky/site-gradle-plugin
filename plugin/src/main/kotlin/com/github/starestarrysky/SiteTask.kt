@@ -10,9 +10,10 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.kohsuke.github.GitHubBuilder
 import java.util.*
+import kotlin.system.exitProcess
 
 @CompileStatic
-class SiteTask : DefaultTask(), GitHubCredentialsAware {
+open class SiteTask : DefaultTask(), GitHubCredentialsAware {
     companion object {
         const val BRANCH_DEFAULT = "refs/heads/main"
         const val NO_JEKYLL_FILE = ".nojekyll"
@@ -48,7 +49,6 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
 
     @get:InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    @get:Optional
     val outputDirectory = project.objects.fileProperty()
 
     @get:Input
@@ -59,7 +59,7 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
     @get:Optional
     val dryRun = project.objects.property(Boolean::class.java)
 
-    override var gitHubCredentials = project.objects.newInstance(GitHubCredentials::class.java)
+    override var credentials = project.objects.newInstance(GitHubCredentials::class.java)
 
     init {
         repositoryName.set(null)
@@ -70,8 +70,7 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
         message.set(null)
         includes.set(arrayListOf("**/*"))
         excludes.empty()
-        TODO("2021/3/24 deploy files")
-        outputDirectory.set(project.layout.buildDirectory.file(""))
+        outputDirectory.set(project.layout.buildDirectory.file("~/.m2/repository"))
         skip.set(false)
         dryRun.set(false)
     }
@@ -88,15 +87,19 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
             }
 
             val gitHub = GitHubBuilder.fromProperties(Properties().apply {
-                setProperty("oauth", gitHubCredentials.oauthToken)
-                setProperty("login", gitHubCredentials.userName)
-                setProperty("password", gitHubCredentials.password)
+                if (credentials.userName != null) {
+                    setProperty("login", credentials.userName)
+                }
+                if (credentials.password != null) {
+                    setProperty("password", credentials.password)
+                }
+                if (credentials.oauthToken != null) {
+                    setProperty("oauth", credentials.oauthToken)
+                }
             }).build()
-            val repository = gitHub.getRepository(repositoryName.get())
+            val repository = gitHub.getRepository("${repositoryOwner.get()}/${repositoryName.get()}")
 
             val baseDir = outputDirectory.get().asFile.absolutePath
-            includes.get().removeIf { include -> StringUtils.isBlank(include) }
-            excludes.get().removeIf { exclude -> StringUtils.isBlank(exclude) }
 
             if (logger.isDebugEnabled) {
                 logger.debug("Scanning {0} and including {1} and excluding {2}",
@@ -107,10 +110,10 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
             }
 
             val includeFiles = project.fileTree(baseDir).matching { match -> match.include(includes.get()) }
-            val excludeFiles = project.fileTree(baseDir).matching { match -> match.exclude(excludes.get()) }
-            includeFiles.plus(excludeFiles)
+            val excludeFiles = project.fileTree(baseDir).matching { match -> match.include(excludes.get()) }
+            val fileTree = includeFiles.minus(excludeFiles)
 
-            TODO("test")
+            // TODO: 2021/3/26 continue
         }
     }
 
@@ -123,6 +126,6 @@ class SiteTask : DefaultTask(), GitHubCredentialsAware {
     }
 
     override fun credentials(action: Action<in GitHubCredentials>) {
-        action.execute(gitHubCredentials)
+        action.execute(credentials)
     }
 }

@@ -8,7 +8,7 @@ import org.gradle.api.tasks.Nested
 
 @CompileStatic
 interface GitHubCredentialsAware : Task {
-    var gitHubCredentials: GitHubCredentials
+    var credentials: GitHubCredentials
         @get:Nested
         get
 
