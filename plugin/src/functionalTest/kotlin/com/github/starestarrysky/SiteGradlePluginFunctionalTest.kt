@@ -25,7 +25,6 @@ class SiteGradlePluginFunctionalTest {
 
             github {
                 credentials {
-                    userName = 'StareStarrySky'
                     oauthToken = ''
                 }
             }
@@ -59,13 +58,18 @@ class SiteGradlePluginFunctionalTest {
 
             configure<GitHubExtension> {
                 credentials {
-                    userName = 'StareStarrySky'
-                    oauthToken = ''
+                    oauthToken = ""
                 }
             }
 
             tasks.register<SiteTask>("site") {
-                repositoryName = "repositoryName"
+                repositoryName.set("repository-test")
+                repositoryOwner.set("StareStarrySky")
+                branch.set("refs/heads/main")
+                message.set("Repository-test for project.version.")
+                outputDirectory.set(file("D:/IdeaProjects/site-gradle-plugin/plugin/build/libs"))
+                includes.addAll("**/*", " ")
+                excludes.addAll("plugin-1.0.0.jar")
             }
         """)
 
