@@ -3,9 +3,9 @@
  */
 package com.github.starestarrysky
 
+import com.github.starestarrysky.tasks.SiteTask
 import org.gradle.testfixtures.ProjectBuilder
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 
 /**
  * A simple unit test for the 'com.github.starestarrysky.site-gradle-plugin' plugin.
