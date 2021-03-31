@@ -16,8 +16,7 @@ import java.util.GregorianCalendar
 @CompileStatic
 open class SiteTask : DefaultTask(), GitHubCredentialsAware {
     companion object {
-        const val REFS_DEFAULT = "heads/main"
-        const val BRANCH_DEFAULT = "refs/$REFS_DEFAULT"
+        const val BRANCH_DEFAULT = "refs/heads/main"
         const val NO_JEKYLL_FILE = ".nojekyll"
     }
 
@@ -65,7 +64,7 @@ open class SiteTask : DefaultTask(), GitHubCredentialsAware {
         branch.set(BRANCH_DEFAULT)
         noJekyll.set(true)
         message.set(null)
-        includes.set(arrayListOf("**/*"))
+        includes.empty()
         excludes.empty()
         outputDirectory.set(project.layout.buildDirectory.file("~/.m2/repository"))
         skip.set(false)
@@ -113,24 +112,24 @@ open class SiteTask : DefaultTask(), GitHubCredentialsAware {
 
             // match files
             val includeFiles = project.fileTree(baseDir).matching { match -> match.include(includes.get()) }
-            val excludeFiles = project.fileTree(baseDir).matching { match -> match.include(excludes.get()) }
-            val fileTree = includeFiles.minus(excludeFiles)
+            val fileTree = if (excludes.get().size == 0) {
+                includeFiles
+            } else {
+                val excludeFiles = project.fileTree(baseDir).matching { match -> match.include(excludes.get()) }
+                includeFiles.minus(excludeFiles)
+            }
 
             if (logger.isDebugEnabled) {
-                logger.debug("Scanning {0} and including {1} and exluding {2}.",
-                    baseDir, includeFiles.asPath, excludeFiles.asPath)
-                logger.info("Creating {0} blobs.", fileTree.count())
                 logger.debug("Scanned files to include: {0}.", fileTree.asPath)
-            } else {
-                logger.info("Creating {0} blobs.", fileTree.count())
             }
+            logger.info("Creating {0} blobs.", fileTree.count())
 
             // .nojekyll
             var createNoJekyll = noJekyll.get()
             val ghTreeBuilder = repository.createTree()
             var treeNum = 0
             fileTree.files.forEach { file ->
-                ghTreeBuilder.add(file.absolutePath, file.readBytes(), false)
+                ghTreeBuilder.add(file.relativeTo(outputDirectory.get().asFile).invariantSeparatorsPath, file.readBytes(), false)
                 treeNum ++
                 if (createNoJekyll && NO_JEKYLL_FILE == file.name) {
                     createNoJekyll = false
@@ -147,9 +146,9 @@ open class SiteTask : DefaultTask(), GitHubCredentialsAware {
                 }
             }
 
-            // get refs/heads/main
+            // get branch
             logger.info("Creating tree with {0} blob entries.", treeNum)
-            val ghRef = repository.getRef(REFS_DEFAULT)
+            val ghRef = repository.getRef(branch.get().substring(branch.get().indexOf("/") + 1))
 
             // create tree and commit
             logger.info("Merging with tree {0}.", ghRef.`object`.sha)

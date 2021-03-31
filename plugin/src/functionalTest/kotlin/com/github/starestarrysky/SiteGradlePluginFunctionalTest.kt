@@ -33,10 +33,9 @@ class SiteGradlePluginFunctionalTest {
                 repositoryName = 'repository-test'
                 repositoryOwner = 'StareStarrySky'
                 branch = 'refs/heads/main'
-                message = 'Repository-test for project.version.'
-                outputDirectory = file('D:/IdeaProjects/site-gradle-plugin/plugin/build/libs')
-                includes = ['**/*', ' ']
-                excludes = ['plugin-1.0.0.jar']
+                message = 'Repository-test for rootProject.version.'
+                outputDirectory = file('project.buildDir/deploy')
+                includes = ['**/*']
             }
         """)
 
@@ -66,10 +65,9 @@ class SiteGradlePluginFunctionalTest {
                 repositoryName.set("repository-test")
                 repositoryOwner.set("StareStarrySky")
                 branch.set("refs/heads/main")
-                message.set("Repository-test for project.version.")
-                outputDirectory.set(file("D:/IdeaProjects/site-gradle-plugin/plugin/build/libs"))
-                includes.addAll("**/*", " ")
-                excludes.addAll("plugin-1.0.0.jar")
+                message.set("Repository-test for rootProject.version.")
+                outputDirectory.set(file("project.buildDir/deploy"))
+                includes.add("**/*")
             }
         """)
 
