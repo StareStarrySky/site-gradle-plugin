@@ -9,7 +9,6 @@
 plugins {
     `java-gradle-plugin`
     kotlin("jvm")
-    `maven-publish`
 }
 
 base {
@@ -48,20 +47,4 @@ tasks.check {
 val generateSourcesJar by tasks.creating(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().java.srcDirs)
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = rootProject.group.toString()
-            artifactId = rootProject.name
-            version = rootProject.version.toString()
-
-            artifact(generateSourcesJar)
-            from(components["java"])
-        }
-    }
 }

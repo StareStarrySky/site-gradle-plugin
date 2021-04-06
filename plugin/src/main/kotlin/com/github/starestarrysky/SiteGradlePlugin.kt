@@ -13,10 +13,6 @@ import org.gradle.api.Plugin
  * A simple 'hello world' plugin.
  */
 class SiteGradlePlugin: Plugin<Project> {
-    companion object {
-        const val EXTENSION_NAME = "github"
-    }
-
     override fun apply(project: Project) {
         val gitHubExtension = project.extensions.create("github", GitHubExtension::class.java)
         val gitHubCredentials = project.extensions.create("credentials", GitHubCredentials::class.java)
