@@ -7,12 +7,13 @@
  */
 
 plugins {
+    id("com.gradle.plugin-publish")
     `java-gradle-plugin`
     kotlin("jvm")
 }
 
 base {
-    archivesBaseName = "plugin"
+    archivesBaseName = "site-gradle-plugin"
 }
 
 dependencies {
@@ -42,8 +43,22 @@ tasks.check {
     dependsOn(functionalTest)
 }
 
+pluginBundle {
+    website = "https://www.starestarrysky.xyz/"
+    vcsUrl = "https://github.com/StareStarrySky/site-gradle-plugin"
 
-val generateSourcesJar by tasks.creating(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().java.srcDirs)
+    description = "com.github.github:site-maven-plugin + org.kohsuke:github-api = this."
+
+    (plugins) {
+        "siteGradlePlugin" {
+            displayName = "com.github.github:site-maven-plugin + org.kohsuke:github-api = this."
+            tags = listOf("github", "site", "deploy", "github-api")
+        }
+    }
+
+    mavenCoordinates {
+        groupId = rootProject.group.toString()
+        artifactId = project.base.archivesBaseName
+        version = rootProject.version.toString()
+    }
 }

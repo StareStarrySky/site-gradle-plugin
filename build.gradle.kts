@@ -14,6 +14,7 @@ buildscript {
         classpath(kotlin("allopen", kotlinVersion))
         classpath(kotlin("noarg", kotlinVersion))
         classpath(kotlin("gradle-plugin", kotlinVersion))
+        classpath("com.gradle.publish:plugin-publish-plugin:0.14.0")
     }
 }
 
