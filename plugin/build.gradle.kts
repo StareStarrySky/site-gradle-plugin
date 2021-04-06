@@ -18,7 +18,6 @@ base {
 dependencies {
     implementation(platform(kotlin("bom")))
     implementation("org.kohsuke:github-api:1.123")
-    implementation("com.github.github:site-maven-plugin:0.12")
 }
 
 gradlePlugin {
