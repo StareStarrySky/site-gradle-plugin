@@ -20,7 +20,7 @@ buildscript {
 
 allprojects {
     group = "com.github.starestarrysky"
-    version = "1.0.0"
+    version = "1.0.1"
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
