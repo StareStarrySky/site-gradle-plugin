@@ -44,7 +44,7 @@ tasks.check {
 }
 
 pluginBundle {
-    website = "https://www.starestarrysky.xyz/"
+    website = "https://github.com/StareStarrySky/site-gradle-plugin"
     vcsUrl = "https://github.com/StareStarrySky/site-gradle-plugin"
 
     description = "com.github.github:site-maven-plugin + org.kohsuke:github-api = this."
