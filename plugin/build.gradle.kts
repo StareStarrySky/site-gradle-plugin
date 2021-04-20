@@ -8,6 +8,7 @@
 
 plugins {
     id("com.gradle.plugin-publish")
+    `maven-publish`
     `java-gradle-plugin`
     kotlin("jvm")
 }
@@ -60,5 +61,22 @@ pluginBundle {
         groupId = rootProject.group.toString()
         artifactId = project.base.archivesBaseName
         version = rootProject.version.toString()
+    }
+}
+
+tasks {
+    publishing {
+        repositories {
+            mavenLocal()
+        }
+        publications {
+            create<MavenPublication>("maven") {
+                groupId = rootProject.group.toString()
+                artifactId = project.base.archivesBaseName
+                version = rootProject.version.toString()
+
+                from(getComponents()["java"])
+            }
+        }
     }
 }

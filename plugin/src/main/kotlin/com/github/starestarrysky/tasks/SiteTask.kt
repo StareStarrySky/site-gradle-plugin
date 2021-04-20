@@ -56,6 +56,7 @@ open class SiteTask : DefaultTask(), GitHubCredentialsAware {
     @get:Optional
     val dryRun = project.objects.property(Boolean::class.java)
 
+    @Internal
     override var credentials = project.objects.newInstance(GitHubCredentials::class.java)
 
     init {
